@@ -1,6 +1,6 @@
 const { response, json } = require('express');
 
-const User = require('../models/users');
+const User = require('../models/users.model');
 
 const bcrypt = require('bcryptjs');
 
@@ -8,11 +8,34 @@ const { generateJWT } = require('../helpers/jwt')
 
 
 const getUsers = async (req, res) => {
-    const users = await User.find({}, 'name email role google');
+
+    const offset = Number(req.query.offset) || 0;
+
+    const limit = Number(req.query.limit) || 0;
+
+    /* const users = await User
+                        .find({}, 'name email role google')
+                        .skip( offset)
+                        .limit( limit );
+
+    const totalUsers = await User.count(); */
+
+    /* Como las dos promesas son asincronas se desestructura en una promesa simultanea */
+
+    const [users, totalUsers] = await Promise.all([
+        User
+        .find({}, 'name email role google img')
+        .skip( offset)
+        .limit( limit ),
+
+        User.countDocuments()
+
+    ]);
 
     res.json({
         ok: true,
         users: users,
+        total: totalUsers,
         uid: req.uid
     })
 };
