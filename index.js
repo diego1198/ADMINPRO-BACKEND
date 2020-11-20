@@ -13,6 +13,11 @@ app.use(cors());
 app.use(express.json());
 //DB
 dbConnection();
+
+//Public Directory
+
+app.use(express.static('public'));
+
 //Routes
 app.use('/api/users', require('./routes/users'));
 
