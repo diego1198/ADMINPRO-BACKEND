@@ -81,7 +81,7 @@ const loginGoogle = async(req,res=response)=>{
     try {
         res.json({
             ok:true,
-            tokenT
+            token: tokenT
         })    
     } catch (error) {
         res.status(401).json({
@@ -93,7 +93,19 @@ const loginGoogle = async(req,res=response)=>{
     
 }
 
+const renewJWT = async(req,res=response) =>{
+    const uid = req.uid;
+
+    const token = await generateJWT(uid);
+
+    res.json({
+        ok:true,
+        token
+    })
+}
+
 module.exports = {
     login,
-    loginGoogle
+    loginGoogle,
+    renewJWT
 }

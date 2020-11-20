@@ -21,10 +21,16 @@ router.post('/',
 
 router.put('/:uid',
 [
+    validateJWT,
+    check('name',"Name is required").not().isEmpty(),
     validateFields
 ],
 updateHospital);
 
-router.delete('/:uid' ,deleteHospital);
+router.delete('/:uid' ,
+[
+    validateJWT,
+],
+deleteHospital);
 
 module.exports = router;

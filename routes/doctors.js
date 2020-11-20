@@ -22,6 +22,9 @@ router.post('/',
 
 router.put('/:uid',
 [
+    validateJWT,
+    check('name','Name is required').not().isEmpty(),
+    check('hospital', 'Hospital Id is required').not().isEmpty(),
     validateFields
 ],
 updateDoctor);
