@@ -96,11 +96,21 @@ const loginGoogle = async(req,res=response)=>{
 const renewJWT = async(req,res=response) =>{
     const uid = req.uid;
 
+    let user = await User.findById(uid);
+
+    if(!user){
+        res.status(401).json({
+            ok:false,
+            msg:"User not found"
+        })
+    }
+
     const token = await generateJWT(uid);
 
     res.json({
         ok:true,
-        token
+        token,
+        user
     })
 }
 

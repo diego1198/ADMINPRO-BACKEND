@@ -10,7 +10,7 @@ router.use( fileUpload() );
 
 router.put('/save/:collection/:uid', validateJWT ,uploadFile);
 
-router.get('/get/:collection/:id', validateJWT ,getFile);
+router.get('/get/:collection/:id',getFile);
 
 module.exports = router;
 

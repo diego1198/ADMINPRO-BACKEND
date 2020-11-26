@@ -114,24 +114,26 @@ const updateUser = async (req, res = response) => {
             }
         }
 
-        fields.email = email;
-
-        //TODO: Verfy with token
-
-        //Its posible to use delete for delete fields of an object
-        /* delete fields.password;
-        delete fields.google; */
+        if( !user.google ){
+            fields.email = email;
+        }else if( user.email !== email){
+            return res.status(400).json({
+                ok:false,
+                msg:"Google User can't update email"
+            });
+        }
 
         const userUpdate = await User.findByIdAndUpdate(uid, fields, { new: true});
 
         res.json({
             ok:true,
-            userUpdate
+            user:userUpdate
         });
 
 
 
     } catch (error) {
+        console.log(error)
         res.json({
             ok:false,
             msg: "Something was wrong"

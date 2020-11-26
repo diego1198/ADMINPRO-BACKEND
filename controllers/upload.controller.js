@@ -73,7 +73,7 @@ const uploadFile = async (req, res = response) => {
 
     res.json({
         ok: true,
-        path: path,
+        name: nameFile,
 
     })
 
@@ -83,7 +83,7 @@ const uploadFile = async (req, res = response) => {
 
 }
 
-const getFile = async (req,res=response) =>{
+const getFile = async (req, res = response) => {
     const collection = req.params.collection;
 
     const id = req.params.id;
@@ -97,18 +97,18 @@ const getFile = async (req,res=response) =>{
         })
     }
 
-    let pathFile = path.join(__dirname,`../uploads/${collection}/${id}`)
+    let pathFile = path.resolve( __dirname , `../uploads/${collection}/${id}`)
 
     //default Image
 
-    if( fs.existsSync(pathFile)){
+    if (fs.existsSync(pathFile)) {
         res.sendFile(pathFile);
-    }else{
-        pathFile = path.join(__dirname,`../uploads/no-img.png`);
+    } else {
+        pathFile = path.resolve(__dirname, `../uploads/no-img.png`);
         res.sendFile(pathFile);
     }
 
-    
+
 }
 
 module.exports = {
