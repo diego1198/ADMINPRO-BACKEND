@@ -20,7 +20,7 @@ const updateImage = async (nameFile, uid, collection) => {
             if (!doctor) {
                 return false;
             }
-            oldPath = `./upload/doctors/${doctor.img}`;
+            oldPath = `./uploads/doctors/${doctor.img}`;
 
             deleteImage(oldPath)
 
@@ -33,10 +33,10 @@ const updateImage = async (nameFile, uid, collection) => {
             break;
         case 'hospitals':
             const hospital = await Hospital.findById(uid);
-            if (!doctor) {
+            if (!hospital) {
                 return false;
             }
-            oldPath = `./upload/doctors/${hospital.img}`;
+            oldPath = `./uploads/hospitals/${hospital.img}`;
 
             deleteImage(oldPath)
 
