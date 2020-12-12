@@ -6,31 +6,33 @@ const bcrypt = require('bcryptjs');
 
 const { generateJWT } = require('../helpers/jwt');
 
-const {googleVerify } = require('../helpers/googleVerify');
+const { googleVerify } = require('../helpers/googleVerify');
+
+const { getMenuFrontEnd } = require('../helpers/menuFrontEnd');
 
 
-const login = async(req,res=response) =>{
+const login = async (req, res = response) => {
 
     const { email, password } = req.body;
 
     try {
 
-        const userDB = await User.findOne({email});
+        const userDB = await User.findOne({ email });
 
-        if(!userDB){
+        if (!userDB) {
             res.status(404).json({
                 ok: false,
                 msg: "Email not found"
             })
         }
 
-        const validPassword = await bcrypt.compare(password,userDB.password);
+        const validPassword = await bcrypt.compare(password, userDB.password);
 
-        if(!validPassword){
-            res.json({
+        if (!validPassword) {
+            res.status(400).json({
                 ok: false,
                 msg: "Incorrect Password"
-            })  
+            })
         }
 
         const token = await generateJWT(userDB.id);
@@ -39,10 +41,11 @@ const login = async(req,res=response) =>{
         res.json({
             ok: true,
             msg: "Login success",
-            token
+            token,
+            menu: getMenuFrontEnd(userDB.role)
         })
-        
-        
+
+
     } catch (error) {
         res.status(400).json({
             ok: false,
@@ -51,16 +54,16 @@ const login = async(req,res=response) =>{
     }
 }
 
-const loginGoogle = async(req,res=response)=>{
+const loginGoogle = async (req, res = response) => {
 
     const token = req.body.token;
 
-    const { name, email,picture} = await googleVerify(token);
+    const { name, email, picture } = await googleVerify(token);
 
-    const user = await User.findOne({email});
+    const user = await User.findOne({ email });
     let userT;
 
-    if(!user){
+    if (!user) {
         userT = new User({
             name: name,
             email,
@@ -68,7 +71,7 @@ const loginGoogle = async(req,res=response)=>{
             img: picture,
             google: true
         })
-    }else{
+    } else {
         userT = user;
         userT.google = true;
     }
@@ -80,37 +83,39 @@ const loginGoogle = async(req,res=response)=>{
 
     try {
         res.json({
-            ok:true,
-            token: tokenT
-        })    
+            ok: true,
+            token: tokenT,
+            menu: getMenuFrontEnd(userT.role)
+        })
     } catch (error) {
         res.status(401).json({
-            ok:false,
+            ok: false,
             msg: "Validation Error"
         })
     }
 
-    
+
 }
 
-const renewJWT = async(req,res=response) =>{
+const renewJWT = async (req, res = response) => {
     const uid = req.uid;
 
     let user = await User.findById(uid);
 
-    if(!user){
+    if (!user) {
         res.status(401).json({
-            ok:false,
-            msg:"User not found"
+            ok: false,
+            msg: "User not found"
         })
     }
 
     const token = await generateJWT(uid);
 
     res.json({
-        ok:true,
+        ok: true,
         token,
-        user
+        user,
+        menu: getMenuFrontEnd(user.role)
     })
 }
 
